@@ -1,0 +1,131 @@
+/* 
+ * Translation App Styles
+ * Custom styles for the translation application
+ */
+
+/* General Styles */
+body {
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Animation for the recording indicator */
+.recording-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: red;
+    margin-right: 8px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Loading spinner animation */
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #3498db;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* History panel animations */
+.history-panel-container {
+    transform: translateX(100%);
+}
+
+.history-panel-container.active {
+    transform: translateX(0);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* History item styles */
+.history-item {
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.history-item .highlight {
+    background-color: rgba(255, 255, 0, 0.3);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Favorite button */
+.favorite-btn {
+    transition: color 0.2s ease;
+}
+
+.favorite-btn.active {
+    color: #f1c40f;
+}
+
+/* Clear history confirmation dialog */
+.clear-history-dialog {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.clear-history-dialog.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .history-panel-container {
+        transform: translateY(100%);
+    }
+    
+    .history-panel-container.active {
+        transform: translateY(0);
+    }
+}
+
+/* RTL specific styles */
+[dir="rtl"] .history-item:hover {
+    transform: translateX(5px);
+}

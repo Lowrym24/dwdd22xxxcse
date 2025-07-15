@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع الترجمة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto p-4 md:flex">
+        <!-- Main content area -->
+        <div class="w-full">
+            <!-- Top Bar with History Toggle and Language Selection -->
+            <div class="bg-white shadow-lg rounded-lg p-4 mb-6 relative">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl md:text-3xl font-bold">موقع الترجمة</h1>
+                    <!-- New History Toggle Button -->
+                    <button id="historyToggleButton" class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-history ml-2"></i>
+                        <span>سجل الترجمة</span>
+                    </button>
+                </div>
+                
+                <!-- Language Selection -->
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0 w-full md:w-auto">
+                        <label for="speechLanguageSelect" class="block text-gray-700 mb-2">اختر لغة التحدث:</label>
+                        <select id="speechLanguageSelect" class="border border-gray-300 rounded-lg p-2 w-full md:w-auto">
+                            <option value="ar-SA">العربية</option>
+                            <option value="en-US">الإنجليزية</option>
+                            <option value="fr-FR">الفرنسية</option>
+                            <option value="es-ES">الإسبانية</option>
+                            <option value="de-DE">الألمانية</option>
+                        </select>
+                    </div>
+                    <div class="w-full md:w-auto">
+                        <label for="translationLanguageSelect" class="block text-gray-700 mb-2">اختر لغة الترجمة:</label>
+                        <select id="translationLanguageSelect" class="border border-gray-300 rounded-lg p-2 w-full md:w-auto">
+                            <option value="en">الإنجليزية</option>
+                            <option value="fr">الفرنسية</option>
+                            <option value="es">الإسبانية</option>
+                            <option value="de">الألمانية</option>
+                            <option value="ar">العربية</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Translation Area -->
+            <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+                <div class="flex flex-col items-center">
+                    <!-- Recording Controls -->
+                    <div class="flex flex-wrap justify-center space-x-2 space-y-0 md:space-x-4 mb-4 rtl:space-x-reverse">
+                        <button id="recordButton" class="btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg m-1">
+                            <i class="fas fa-microphone ml-1"></i> اضغط للتسجيل
+                        </button>
+                        <button id="stopButton" class="btn bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg m-1 hidden">
+                            <i class="fas fa-stop ml-1"></i> إيقاف التسجيل
+                        </button>
+                        <button id="translateBtn" class="btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg m-1">
+                            <i class="fas fa-language ml-1"></i> ترجم
+                        </button>
+                        <button id="saveTranslationBtn" class="btn bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg m-1">
+                            <i class="fas fa-save ml-1"></i> حفظ
+                        </button>
+                    </div>
+                    
+                    <!-- Recording Status -->
+                    <div id="recordingIndicator" class="flex items-center mb-4 hidden">
+                        <div class="recording-indicator"></div>
+                        <span id="recordingStatus" class="text-sm text-red-500">جاري التسجيل...</span>
+                    </div>
+                    
+                    <!-- Translation Textareas -->
+                    <div class="flex flex-col md:flex-row w-full mb-4">
+                        <div class="w-full md:w-1/2 p-2">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-gray-700 font-bold">النص الأصلي</label>
+                                <button id="clearOriginalBtn" class="text-red-500 hover:text-red-600">
+                                    <i class="fas fa-trash"></i> مسح
+                                </button>
+                            </div>
+                            <textarea id="translatedText" class="w-full h-64 p-4 border border-gray-300 rounded-lg mb-2 overflow-y-auto font-mono" placeholder="النص سيظهر هنا..." style="white-space: pre-wrap;"></textarea>
+                            <div class="flex justify-between">
+                                <button id="copyOriginalBtn" class="btn bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                                    <i class="fas fa-copy ml-1"></i> نسخ
+                                </button>
+                                <button id="speakOriginalBtn" class="btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                                    <i class="fas fa-volume-up ml-1"></i> استمع
+                                </button>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-1/2 p-2">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-gray-700 font-bold">النص المترجم</label>
+                                <div id="loadingIndicator" class="loading-spinner hidden"></div>
+                            </div>
+                            <textarea id="translationOutput" class="w-full h-64 p-4 border border-gray-300 rounded-lg mb-2 overflow-y-auto font-mono" placeholder="النص المترجم سيظهر هنا..." style="white-space: pre-wrap;" readonly></textarea>
+                            <div class="flex justify-between">
+                                <button id="copyTranslatedBtn" class="btn bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                                    <i class="fas fa-copy ml-1"></i> نسخ
+                                </button>
+                                <button id="speakTranslatedBtn" class="btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                                    <i class="fas fa-volume-up ml-1"></i> استمع
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- New History Panel Overlay (always hidden by default) -->
+        <div id="historyPanel" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden">
+            <div class="history-panel-container bg-white w-full md:w-96 h-full md:h-auto md:max-h-[90vh] absolute top-0 left-0 md:top-20 md:left-auto md:right-20 overflow-hidden shadow-2xl rounded-none md:rounded-xl flex flex-col transform transition-transform duration-300 ease-in-out">
+                <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-blue-500 text-white">
+                    <h2 class="text-xl font-bold">سجل الترجمة</h2>
+                    <div class="flex space-x-3 rtl:space-x-reverse">
+                        <button id="clearHistoryBtn" class="text-white hover:text-red-200 transition-colors duration-200">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button id="closeHistoryBtn" class="text-white hover:text-gray-200 transition-colors duration-200">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-4 border-b border-gray-200 bg-gray-50">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="historySearchInput" 
+                            placeholder="ابحث في السجل..." 
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10"
+                        />
+                        <i class="fas fa-search absolute top-3 left-3 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <div id="historyList" class="flex-1 overflow-auto p-2 bg-gray-50">
+                    <!-- History items will be added here by JavaScript -->
+                    <div class="p-4 text-gray-500 text-center">لا توجد ترجمات سابقة</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile History Toggle Button (for small screens) -->
+        <div class="fixed bottom-4 right-4 md:hidden">
+            <button id="historyToggle" class="btn bg-indigo-600 hover:bg-indigo-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center">
+                <i class="fas fa-history"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Recording Dialog -->
+    <div id="recordingDialog" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-11/12 md:w-1/3">
+            <h2 class="text-xl font-bold mb-4">التسجيل</h2>
+            <p class="mb-4">هل تريد التسجيل مع نفس الرسالة أو حذف الرسالة القديمة؟</p>
+            <div class="flex justify-around">
+                <button id="continueRecording" class="btn bg-blue-500 text-white px-4 py-2 rounded-full">
+                    <i class="fas fa-microphone"></i> متابعة التسجيل
+                </button>
+                <button id="clearAndRecord" class="btn bg-red-500 text-white px-4 py-2 rounded-full">
+                    <i class="fas fa-trash"></i> حذف الرسالة القديمة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copy Dialog -->
+    <div id="copyDialog" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-11/12 md:w-1/3">
+            <p class="text-center">تم النسخ بنجاح!</p>
+        </div>
+    </div>
+
+    <!-- Error Dialog -->
+    <div id="errorDialog" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-11/12 md:w-1/3">
+            <h2 class="text-xl font-bold mb-4">خطأ</h2>
+            <p id="errorMessage" class="mb-4">لقد استخدمت جميع الترجمات المجانية المتاحة لهذا اليوم. الرجاء المحاولة مرة أخرى لاحقًا.</p>
+            <button id="closeErrorDialog" class="btn bg-red-500 text-white px-4 py-2 rounded-full">إغلاق</button>
+        </div>
+    </div>
+    
+    <!-- Save Translation Name Dialog -->
+    <div id="saveNameDialog" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-11/12 md:w-1/3">
+            <h2 class="text-xl font-bold mb-4">تسمية الترجمة</h2>
+            <p class="mb-4">أدخل اسماً لهذه الترجمة:</p>
+            <input 
+                type="text" 
+                id="translationNameInput" 
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4"
+                placeholder="اسم الترجمة"
+            />
+            <div class="flex justify-between">
+                <button id="cancelSaveNameBtn" class="btn bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg">إلغاء</button>
+                <button id="confirmSaveNameBtn" class="btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Dialog -->
+    <div id="subscriptionDialog" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-11/12 md:w-1/2 max-w-lg">
+            <div class="flex justify-between items-start">
+                <h2 class="text-2xl font-bold mb-4">اشترك معنا</h2>
+                <span id="currentTime" class="text-sm text-gray-500"></span>
+            </div>
+            
+            <p class="mb-4">اشترك في قنواتنا للحصول على المزيد من الميزات والتحديثات:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="border border-gray-200 rounded-lg p-4 flex flex-col items-center">
+                    <i class="fab fa-youtube text-red-600 text-4xl mb-2"></i>
+                    <h3 class="font-bold text-lg mb-2">قناة اليوتيوب</h3>
+                    <p class="text-sm text-center mb-4">تابع أحدث الفيديوهات التعليمية والشروحات</p>
+                    <a href="https://youtube.com" target="_blank" class="btn bg-red-600 text-white px-4 py-2 rounded-full text-sm">اشترك الآن</a>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-4 flex flex-col items-center">
+                    <i class="fab fa-telegram text-blue-500 text-4xl mb-2"></i>
+                    <h3 class="font-bold text-lg mb-2">قناة التلجرام</h3>
+                    <p class="text-sm text-center mb-4">انضم إلى مجتمعنا للحصول على آخر الأخبار والتحديثات</p>
+                    <a href="https://t.me" target="_blank" class="btn bg-blue-500 text-white px-4 py-2 rounded-full text-sm">انضم الآن</a>
+                </div>
+            </div>
+            
+            <div class="flex justify-between">
+                <button id="skipSubscription" class="text-gray-500">تخطي</button>
+                <button id="closeSubscriptionDialog" class="btn bg-green-500 text-white px-4 py-2 rounded-full">متابعة استخدام التطبيق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/services.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
